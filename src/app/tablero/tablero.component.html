@@ -1,0 +1,54 @@
+<div>{{estado}}</div>
+<div>
+    <table>
+        <tr>
+            <td>{{puntajeBot[0]}}</td>
+            <td>{{puntajeBot[6]}}</td>
+            <td>{{puntajeBot[3]}}</td> 
+        </tr>
+        <tr>
+            <td>{{puntajeBot[1]}}</td>
+            <td>{{puntajeBot[7]}}</td>
+            <td>{{puntajeBot[4]}}</td> 
+        </tr>
+        <tr>
+            <td>{{puntajeBot[2]}}</td>
+            <td>{{puntajeBot[8]}}</td>
+            <td>{{puntajeBot[5]}}</td>
+        </tr>
+        <tr>
+            <td>{{puntajeBot[9]}}</td>
+            <td>{{puntajeBot[10]}}</td>
+        </tr>
+    </table>
+    <div>TotalPC</div>
+</div>
+<div>
+    <h2>{{dados.join(", ")}}</h2>
+    <button type="button" (click)="jugarJ1()">Lanzar</button>
+</div>
+<div>
+    <table>
+        <tr>
+            <td (click)="anotarPuntajeJ1(0)">{{puntajeJ1Tablero[0]}}</td>
+            <td (click)="anotarPuntajeJ1(6)">{{puntajeJ1Tablero[6]}}</td>
+            <td (click)="anotarPuntajeJ1(3)">{{puntajeJ1Tablero[3]}}</td> 
+        </tr>
+        <tr>
+            <td (click)="anotarPuntajeJ1(1)">{{puntajeJ1Tablero[1]}}</td>
+            <td (click)="anotarPuntajeJ1(7)">{{puntajeJ1Tablero[7]}}</td>
+            <td (click)="anotarPuntajeJ1(4)">{{puntajeJ1Tablero[4]}}</td> 
+        </tr>
+        <tr>
+            <td (click)="anotarPuntajeJ1(2)">{{puntajeJ1Tablero[2]}}</td>
+            <td (click)="anotarPuntajeJ1(8)">{{puntajeJ1Tablero[8]}}</td>
+            <td (click)="anotarPuntajeJ1(5)">{{puntajeJ1Tablero[5]}}</td> 
+        </tr>
+        <tr>
+            <td (click)="anotarPuntajeJ1(9)">{{puntajeJ1Tablero[9]}}</td>
+            <td (click)="anotarPuntajeJ1(10)">{{puntajeJ1Tablero[10]}}</td>
+        </tr>
+    </table>
+    <div>TotalTU</div>
+</div>
+
