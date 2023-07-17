@@ -1,4 +1,4 @@
-<div>{{estado}}</div>
+<div>{{mensaje}}</div>
 <div>
     <table>
         <tr>
@@ -31,7 +31,7 @@
         <span (click)="seleccionarDados(3)">{{dados[3]}}</span>
         <span (click)="seleccionarDados(4)">{{dados[4]}}</span>
     </div>
-    <button type="button" (click)="jugarJ1()">Lanzar</button>
+    <button type="button" [disabled]="botonLanzarDisabled" (click)="jugarJ1()">Lanzar</button>
 </div>
 <div>
     <table>

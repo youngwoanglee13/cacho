@@ -7,7 +7,8 @@ import { Component } from '@angular/core';
 })
 export class TableroComponent {
   dados: number[] = []
-  dadosARelanzar: number[] = []
+  dadosARelanzar: number[]= [];
+  dadosVolcados: number[] = []
   puntajeJ1Tablero= [0,0,0,0,0,0,0,0,0,0,0];
   puntajeJ1= [0,0,0,0,0,0,0,0,0,0,0];
   puntajeBot: number[]= [0,0,0,0,0,0,0,0,0,0,0];
@@ -17,22 +18,26 @@ export class TableroComponent {
   primeraTiradaJ1=true;
   turnoJ1=true;
   partidaEnCurso=true;
-  estado = 'Empecemos';
+  mensaje = 'Hola tu, lanza los dados!';
   jugadasRealizadas=0;
+  botonLanzarDisabled=false;
+  setPuntajeDisabled=true;
   lanzarDados() {
     this.dados = [];
     for (let i = 0; i < 5; i++) {
       this.dados.push(Math.floor(Math.random() * 6) + 1);
     }
+    console.log("LANZANDO:",this.dados);
   }
   lanzaraNDados(dadosEnMesa: number[]){
-    if(this.turnoJ1 && this.dadosARelanzar.length===0) return;
     const dadosARelanzar= 5-dadosEnMesa.length;
     for (let i = 0; i < dadosARelanzar; i++) {
       dadosEnMesa.push(Math.floor(Math.random() * 6) + 1);
     }
     this.dados=dadosEnMesa;
+    console.log("LANZANDO OTRA VEZ:",this.dados);
   }
+  
   borrarUnaCasilla(esJ1:boolean){
     if(esJ1){
      this.puntajeJ1[this.buscarCasillaConMenorValor(this.puntajeJ1)]=-1;
@@ -47,26 +52,54 @@ export class TableroComponent {
     return -1;
   }
   anotarPuntajeJ1(posicion: number){
-    if(this.puntajeJ1[posicion]==0){
+    if(this.setPuntajeDisabled) return;
+    if(this.puntajeJ1[posicion]==0  && this.posiblesPuntajes[posicion]!=0){
       this.puntajeJ1[posicion]=this.posiblesPuntajes[posicion];
       this.puntajeJ1Tablero=this.puntajeJ1;
+      this.setPuntajeDisabled=true;
+      console.log("SE ANOTO",this.puntajeJ1[posicion]);
+      this.jugarBot3();//Despues de anotar el puntaje del jugador 1, juega el BOT
     }
-  }
+    const posiblesPuntajes= this.posiblesPuntajes.filter(puntaje=>puntaje!=0);
+    if(this.dadosVolcados.length>0 && posiblesPuntajes.length===0 && this.puntajeJ1[posicion]===0){
+      //EN UNA FUTURA ACTUALIZACION, SE PUEDE ELIMINAR SOLO SI NO HAY POSIBLES PUNTAJES CON NINGUNA COMBINACION DE DADOS VOLCADOS
+      console.log("SE ELIMINA",this.puntajeJ1[posicion]);
+      this.puntajeJ1[posicion]=-1;
+    }
 
+    
+
+    
+  }
+  getDadosEnMesa(){
+    const dadosQueSeMantienen=this.dados.slice();
+    for(let i=0;i<this.dadosARelanzar.length;i++){
+        dadosQueSeMantienen[this.dadosARelanzar[i]]=0;
+    }
+    return dadosQueSeMantienen.filter(dado=>dado!=0);
+  }
   jugarJ1(){
-    if(this.primeraTiradaJ1){this.lanzarDados();}else{this.lanzaraNDados(this.dadosARelanzar);}
-    this.calcularPosiblesPuntajes(1,this.puntajeJ1);
-    this.estado='Anota o selecciona los dados a relanzar';
-    this.puntajeJ1Tablero=this.posiblesPuntajes.slice();
-    // this.dados=[4,4,6,6,1];
-    // this.calcularPosiblesPuntajes(2,this.puntajeBot)
-    // console.log("PUNTAJE",this.elegirMejorPuntajePorImpacto());
-    //this.lanzarDados();
-    //console.log(this.a());
-    // const x=this.c([2,2,2,4]);
-    // console.log(x,"-----------------");
-    // x.forEach(element => {console.log(element,this.esBuenaJugadaBot(element));});
+    if(this.primeraTiradaJ1){
+      console.log("JUEGA J1 -------------");
+      this.primeraTiradaJ1=false;
+      this.lanzarDados();
+      this.setPuntajeDisabled=false;
+      this.calcularPosiblesPuntajes(1,this.puntajeJ1);
+      this.mostrarOpcionesDePuntajeJ1();
+      this.setMensaje('Anota tu puntaje o puedes volver a lanzar los dados',10);
       
+    }else{
+      if(this.turnoJ1 && this.dadosARelanzar.length===0) {this.setMensaje('Primero selecciona los dados a relanzar',7);return;}
+      this.lanzaraNDados(this.getDadosEnMesa().slice());
+      this.setPuntajeDisabled=true;
+      this.botonLanzarDisabled=true;
+      this.puntajeJ1Tablero=this.puntajeJ1.slice();
+      this.setMensaje('Tienes que volcar uno o dos dados',15);
+    }
+    this.verificarEstadoDelJuego();
+    
+    //this.puntajeJ1Tablero=this.posiblesPuntajes.slice();
+   
     
     // 
     // console.log(this.esBuenaJugadaBot(this.dados));
@@ -77,20 +110,65 @@ export class TableroComponent {
     // this.puntajeJ1Tablero=this.posiblesPuntajes.slice();
     // this.posiblesPuntajes;
   }
+  mostrarOpcionesDePuntajeJ1(){
+    console.log("posi",this.posiblesPuntajes);
+    this.puntajeJ1Tablero=this.posiblesPuntajes.slice();
+    for(let i=0;i<11;i++){
+      if(this.puntajeJ1[i]!==0){
+        this.puntajeJ1Tablero[i]=this.puntajeJ1[i];
+      }
+    }
+  }
   seleccionarDados(posDado:number){
-    if(!this.turnoJ1) return;
-    this.seleccionarDadosARelanzar(posDado);
-    
+    if(!this.turnoJ1 && !this.primeraTiradaJ1) return;    
+    this.seleccionarDadosARelanzarJ1(posDado);
+    this.volcarDadosJ1(posDado);
     
   }
-  seleccionarDadosARelanzar(posDado:number){
-      this.primeraTiradaJ1=false;
-      if(this.dadosARelanzar.includes(posDado)) return;
+  volcarDadosJ1(posDado:number){
+    if(!this.botonLanzarDisabled) return;
+    if(this.dadosVolcados.includes(posDado)){
+      this.dadosVolcados=this.dadosVolcados.filter((dado) => dado !== posDado);
+      console.log("DESVOLCANDO",this.dados[posDado]);
+      this.dados[posDado]=7-this.dados[posDado];
+    }else{
+      if(this.dadosVolcados.length===2) return;
+      this.dadosVolcados.push(posDado);
+      console.log("VOLCANDO",this.dados[posDado]);
+      this.dados[posDado]=7-this.dados[posDado];
+    }
+    if(this.dadosVolcados.length>0){
+      this.calcularPosiblesPuntajes(2,this.puntajeJ1);
+      this.mostrarOpcionesDePuntajeJ1();
+      this.setPuntajeDisabled=false;
+    }else{
+      this.puntajeJ1Tablero=this.puntajeJ1;
+      this.setPuntajeDisabled=false;
+      this.setMensaje('Tienes que volcar uno o dos dados',10);
+    }
+    
+  }
+  seleccionarDadosARelanzarJ1(posDado:number){
+    if(this.botonLanzarDisabled) return;
+    if(this.dadosARelanzar.includes(posDado)){
+      this.dadosARelanzar=this.dadosARelanzar.filter((dado) => dado !== posDado);
+    }else{
       this.dadosARelanzar.push(posDado);
-      this.estado='Seleccionaste';
-      for(let i=0;i<this.dadosARelanzar.length;i++){
-        this.estado+=" "+this.dados[this.dadosARelanzar[i]];
-      }     
+    } 
+    let mensaje='Lanzar ';//mensaje para el usuario
+    for(let i=0;i<this.dadosARelanzar.length;i++){//mensaje para el usuario
+      mensaje+=" "+this.dados[this.dadosARelanzar[i]];
+    }
+    this.setMensaje(mensaje, 10);  
+  }
+  habilitarJ1(){
+    if(this.partidaEnCurso){
+    this.setMensaje('Es tu turno, lanza los dados',20);
+    this.botonLanzarDisabled=false;
+    this.primeraTiradaJ1=true;
+    this.dadosARelanzar=[];
+    this.dadosVolcados=[];
+    }
   }
   calcularPosiblesPuntajes(lanzamiento: number,puntajesActuales:number[]){
     for (let i = 0; i <6; i++) {
@@ -151,7 +229,7 @@ export class TableroComponent {
       this.puntajeTotalJ1+=this.puntajeJ1[i];
     }
   }
-  actualizarEstado(){
+  verificarEstadoDelJuego(){
     this.calcularTotales();
     if(this.jugadasRealizadas===11){
       this.terminarPartida();
@@ -159,14 +237,26 @@ export class TableroComponent {
   }
   terminarPartida(){
     this.partidaEnCurso=false;
+    this.setMensaje('Termino la partida',20);
     console.log("TERMINO LA PARTIDA"); // los botones se desactivan
   }
+  setMensaje(estado: string, velocidad: number) {
+    this.mensaje = "";
+    let i = 0;
+    const intervalo = setInterval(() => {
+      this.mensaje += estado[i];
+      i++;
+      if (i >= estado.length) {
+        clearInterval(intervalo);
+      }
+    }, velocidad);
+  }
+  
   //________________________________________________________________________________________________________InicioBot
   jugarBot3(){
-    console.log("JUEGA BOT -------------------------");
+    console.log("JUEGA BOT -------------");
     this.jugadasRealizadas++;
     this.lanzarDados();
-    console.log("LANZANDO:",this.dados);
     this.calcularPosiblesPuntajes(1,this.puntajeBot);
     const posMejorPuntaje=this.elegirMejorPuntajeBot();
     if(posMejorPuntaje!=404){
@@ -178,13 +268,15 @@ export class TableroComponent {
     }else{
       this.lanzarDadosSegundaVez();
     }    
-    this.actualizarEstado();
+    this.verificarEstadoDelJuego();
+    
+    this.habilitarJ1();
+
   }
   lanzarDadosSegundaVez(){
     const res=this.elegirDadosARelanzar();
     //console.log("SE QUEDA",res);//PRUEBA
     this.lanzaraNDados(res);
-    console.log("VOLVIENDO A LANZAR:",this.dados);
     this.volcarDadosBot();
     console.log("VOLCANDO:",this.dados);
     this.calcularPosiblesPuntajes(2,this.puntajeBot);
