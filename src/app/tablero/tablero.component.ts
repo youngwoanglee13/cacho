@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-
 @Component({
   selector: 'app-tablero',
   templateUrl: './tablero.component.html',
@@ -33,9 +32,9 @@ export class TableroComponent {
     const dadosDormida= this.dados.filter(dado=>dado!=this.dados[0]);
     if(dadosDormida.length===0){
       if(this.turnoJ1){
-        this.setMensaje('Dormida! Ganaste. Dados iguales al primer lanzamiento ',10);
+        this.setMensaje('Dormida! Ganaste. Dados iguales al primer lanzamiento ',20);
       }else{
-        this.setMensaje('Dormida! Gana el Bot. Dados iguales al primer lanzamiento ',10); 
+        this.setMensaje('Dormida! Gana el Bot. Dados iguales al primer lanzamiento ',20); 
       }
       this.partidaEnCurso=false;
       return true;
@@ -90,40 +89,29 @@ export class TableroComponent {
     return dadosQueSeMantienen.filter(dado=>dado!=0);
   }
   jugarJ1(){
-    if(this.primeraTiradaJ1){
-      console.log("JUEGA J1 -------------");
-      this.primeraTiradaJ1=false;
-      this.lanzarDados();
-      if(this.esDormida()) return;
-      this.setPuntajeDisabled=false;
-      this.calcularPosiblesPuntajes(1,this.puntajeJ1);
-      this.mostrarOpcionesDePuntajeJ1();
-      this.setMensaje('Anota tu puntaje o puedes volver a lanzar los dados',10);
+    // if(this.primeraTiradaJ1){
+    //   console.log("JUEGA J1 -------------");
+    //   this.primeraTiradaJ1=false;
+    //   this.lanzarDados();
+    //   if(this.esDormida()) return;
+    //   this.setPuntajeDisabled=false;
+    //   this.calcularPosiblesPuntajes(1,this.puntajeJ1);
+    //   this.mostrarOpcionesDePuntajeJ1();
+    //   this.setMensaje('Anota tu puntaje o puedes volver a lanzar los dados',30);
       
-    }else{
-      if(this.turnoJ1 && this.dadosARelanzar.length===0) {this.setMensaje('Primero selecciona los dados a relanzar',7);return;}
-      this.lanzaraNDados(this.getDadosEnMesa().slice());
-      this.setPuntajeDisabled=true;
-      this.botonLanzarDisabled=true;
-      this.puntajeJ1Tablero=this.puntajeJ1.slice();
-      this.setMensaje('Tienes que volcar uno o dos dados',15);
-    }
-    this.verificarEstadoDelJuego();
-    
-    //this.puntajeJ1Tablero=this.posiblesPuntajes.slice();
-   
-    
-    // 
-    // console.log(this.esBuenaJugadaBot(this.dados));
-
-    // this.puntajeJ1;
-     //this.lanzarDados();
-    // this.calcularPosiblesPuntajes(this.puntajeJ1.slice());
-    // this.puntajeJ1Tablero=this.posiblesPuntajes.slice();
-    // this.posiblesPuntajes;
+    // }else{
+    //   if(this.turnoJ1 && this.dadosARelanzar.length===0) {this.setMensaje('Primero selecciona los dados a relanzar',17);return;}
+    //   this.lanzaraNDados(this.getDadosEnMesa().slice());
+    //   this.setPuntajeDisabled=true;
+    //   this.botonLanzarDisabled=true;
+    //   this.puntajeJ1Tablero=this.puntajeJ1.slice();
+    //   this.setMensaje('Tienes que volcar uno o dos dados, luego anota',25);
+    // }
+    // this.verificarEstadoDelJuego();
+    this.dados=[1,1,1,5,5];
+    console.log(this.calcularFull(1));
   }
   mostrarOpcionesDePuntajeJ1(){
-    console.log("posi",this.posiblesPuntajes);
     this.puntajeJ1Tablero=this.posiblesPuntajes.slice();
     for(let i=0;i<11;i++){
       if(this.puntajeJ1[i]!==0){
@@ -151,7 +139,7 @@ export class TableroComponent {
 
       const posiblesPuntajes= this.posiblesPuntajes.filter(puntaje=>puntaje!=0);
       if(posiblesPuntajes.length===0){
-        this.setMensaje('Si no puedes anotar nada, elimina una casilla vacia',10);
+        this.setMensaje('Si no puedes anotar nada, elimina una casilla vacia',20);
       }
     }
     if(this.dadosVolcados.length>0){
@@ -161,7 +149,7 @@ export class TableroComponent {
     }else{
       this.puntajeJ1Tablero=this.puntajeJ1;
       this.setPuntajeDisabled=false;
-      this.setMensaje('Tienes que volcar uno o dos dados',10);
+      this.setMensaje('Vuelca uno o dos dados, luego anota',20);
     }
     
   }
@@ -180,7 +168,7 @@ export class TableroComponent {
   }
   habilitarJ1(){
     if(this.partidaEnCurso){
-    this.setMensaje('Es tu turno, lanza los dados',20);
+    this.setMensaje('Es tu turno, lanza los dados',30);
     this.botonLanzarDisabled=false;
     this.primeraTiradaJ1=true;
     this.dadosARelanzar=[];
@@ -196,8 +184,8 @@ export class TableroComponent {
     for (let i = 0; i <6; i++) {
       this.posiblesPuntajes[i]=this.calcularNumerosRepetidos(i+1)*(i+1);
     }
-    this.posiblesPuntajes[9]=this.calcularGrandeODormida(lanzamiento);
-    this.posiblesPuntajes[10]=this.calcularGrandeODormida(lanzamiento);
+    this.posiblesPuntajes[9]=this.calcularGrande();
+    this.posiblesPuntajes[10]=this.calcularGrande();
     this.posiblesPuntajes[6]=this.calcularEscalera(lanzamiento);
     this.posiblesPuntajes[7]=this.calcularFull(lanzamiento);
     this.posiblesPuntajes[8]=this.calcularPoker(lanzamiento);
@@ -207,8 +195,8 @@ export class TableroComponent {
   }
   calcularFull(lanzamiento: number){
     const dados2 = this.dados.slice();dados2.sort();
-    if(this.calcularNumerosRepetidos(dados2[0])+this.calcularNumerosRepetidos(dados2[4])===5 && lanzamiento===1)return 35;
-    if(this.calcularNumerosRepetidos(dados2[0])+this.calcularNumerosRepetidos(dados2[4])===5)return 30;
+    if(this.calcularNumerosRepetidos(dados2[0])*this.calcularNumerosRepetidos(dados2[4])===6 && lanzamiento===1)return 35;
+    if(this.calcularNumerosRepetidos(dados2[0])*this.calcularNumerosRepetidos(dados2[4])===6)return 30;
     return 0;
   }
   calcularPoker(lanzamiento: number){
@@ -224,12 +212,9 @@ export class TableroComponent {
     if(dados2[4]===dados2[3]+1 && dados2[3]===dados2[2]+1 && dados2[2]===dados2[1]+1 && dados2[1]===dados2[0]+1 && this.puntajeBot[6]===0){return 20};
     return 0;
   }
-  calcularGrandeODormida(lanzamiento: number){
+  calcularGrande(){
     let dados2 = this.dados.slice();
     dados2=dados2.filter((element) => element !=this.dados[0]);
-    if(dados2.length==0 && lanzamiento==1 ){
-      console.log("DORMIDA, GANA LA PARTIDA");//GANA LA PARTIDA
-    }
     return dados2.length===0?50:0;
   }
   calcularNumerosRepetidos(numero: number): number {
@@ -263,7 +248,7 @@ export class TableroComponent {
     console.log("TERMINO LA PARTIDA"); // los botones se desactivan
   }
   setMensaje(estado: string, velocidad: number) {
-    this.mensaje = "";
+    this.mensaje = "Bot:";
     let i = 0;
     const intervalo = setInterval(() => {
       this.mensaje += estado[i];
@@ -273,11 +258,13 @@ export class TableroComponent {
       }
     }, velocidad);
   }
-  
+
   //________________________________________________________________________________________________________InicioBot
-  jugarBot3(){
+  async jugarBot3(){
+    this.botonLanzarDisabled=true;
     console.log("JUEGA BOT -------------");
     this.jugadasRealizadas++;
+    this.setMensaje('Mi turno', 30);
     this.lanzarDados();
     if(this.esDormida()) return;
     this.calcularPosiblesPuntajes(1,this.puntajeBot);
@@ -287,19 +274,23 @@ export class TableroComponent {
         this.puntajeBot[posMejorPuntaje]=this.posiblesPuntajes[posMejorPuntaje];
         console.log("SE ANOTO",this.puntajeBot[posMejorPuntaje]);
         console.log("--",this.puntajeBot);
-      }else{this.lanzarDadosSegundaVez();}
+        this.setMensaje('Anoto '+ this.puntajeBot[posMejorPuntaje], 30);
+      }else{
+        this.setMensaje('Vuelvo a lanzar', 30);;
+        this.lanzarDadosSegundaVez();
+       }
     }else{
+      this.setMensaje('Vuelvo a lanzar', 30);
       this.lanzarDadosSegundaVez();
     }    
     this.verificarEstadoDelJuego();
-    
     this.habilitarJ1();
 
   }
-  lanzarDadosSegundaVez(){
+  async lanzarDadosSegundaVez(){
     const res=this.elegirDadosARelanzar();
-    //console.log("SE QUEDA",res);//PRUEBA
     this.lanzaraNDados(res);
+    this.setMensaje('Vuelco dados', 30);
     this.volcarDadosBot();
     console.log("VOLCANDO:",this.dados);
     this.calcularPosiblesPuntajes(2,this.puntajeBot);
@@ -310,7 +301,7 @@ export class TableroComponent {
     }else{
       console.log("NO SE PUEDE ANOTAR. SE BORRA",);
       this.borrarUnaCasilla(false);
-    }
+    }      
   }
   elegirDadosARelanzar(): number[] {//ese es el que hay que usar
     const diceValues = this.dados; // Posibles valores de los dados
