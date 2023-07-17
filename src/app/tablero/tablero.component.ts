@@ -29,6 +29,19 @@ export class TableroComponent {
     }
     console.log("LANZANDO:",this.dados);
   }
+  esDormida(){
+    const dadosDormida= this.dados.filter(dado=>dado!=this.dados[0]);
+    if(dadosDormida.length===0){
+      if(this.turnoJ1){
+        this.setMensaje('Dormida! Ganaste. Dados iguales al primer lanzamiento ',10);
+      }else{
+        this.setMensaje('Dormida! Gana el Bot. Dados iguales al primer lanzamiento ',10); 
+      }
+      this.partidaEnCurso=false;
+      return true;
+    }
+    return false;
+  }
   lanzaraNDados(dadosEnMesa: number[]){
     const dadosARelanzar= 5-dadosEnMesa.length;
     for (let i = 0; i < dadosARelanzar; i++) {
@@ -58,7 +71,7 @@ export class TableroComponent {
       this.puntajeJ1Tablero=this.puntajeJ1;
       this.setPuntajeDisabled=true;
       console.log("SE ANOTO",this.puntajeJ1[posicion]);
-      this.jugarBot3();//Despues de anotar el puntaje, juega el BOT
+      this.habilitarBot();
     }
     const posiblesPuntajes= this.posiblesPuntajes.filter(puntaje=>puntaje!=0);
     if(!this.primeraTiradaJ1 &&this.dadosVolcados.length>0 && posiblesPuntajes.length===0 && this.puntajeJ1[posicion]===0){
@@ -66,7 +79,7 @@ export class TableroComponent {
       console.log("SE ELIMINA",this.puntajeJ1[posicion]);
       this.puntajeJ1[posicion]=-1;
       this.puntajeJ1Tablero=this.puntajeJ1;
-      this.jugarBot3();//Despues de anotar el puntaje, juega el BOT
+      this.habilitarBot();
     }    
   }
   getDadosEnMesa(){
@@ -81,6 +94,7 @@ export class TableroComponent {
       console.log("JUEGA J1 -------------");
       this.primeraTiradaJ1=false;
       this.lanzarDados();
+      if(this.esDormida()) return;
       this.setPuntajeDisabled=false;
       this.calcularPosiblesPuntajes(1,this.puntajeJ1);
       this.mostrarOpcionesDePuntajeJ1();
@@ -147,7 +161,7 @@ export class TableroComponent {
     }else{
       this.puntajeJ1Tablero=this.puntajeJ1;
       this.setPuntajeDisabled=false;
-      this.setMensaje('Tienessss que volcar uno o dos dados',10);
+      this.setMensaje('Tienes que volcar uno o dos dados',10);
     }
     
   }
@@ -171,7 +185,12 @@ export class TableroComponent {
     this.primeraTiradaJ1=true;
     this.dadosARelanzar=[];
     this.dadosVolcados=[];
+    this.turnoJ1=true;
     }
+  }
+  habilitarBot(){
+    this.turnoJ1=false;
+    this.jugarBot3();
   }
   calcularPosiblesPuntajes(lanzamiento: number,puntajesActuales:number[]){
     for (let i = 0; i <6; i++) {
@@ -235,10 +254,10 @@ export class TableroComponent {
   verificarEstadoDelJuego(){
     this.calcularTotales();
     if(this.jugadasRealizadas===11){
-      this.terminarPartida();
+      this.terminarPartidaPorPuntos();
     }
   }
-  terminarPartida(){
+  terminarPartidaPorPuntos(){
     this.partidaEnCurso=false;
     this.setMensaje('Termino la partida',20);
     console.log("TERMINO LA PARTIDA"); // los botones se desactivan
@@ -260,6 +279,7 @@ export class TableroComponent {
     console.log("JUEGA BOT -------------");
     this.jugadasRealizadas++;
     this.lanzarDados();
+    if(this.esDormida()) return;
     this.calcularPosiblesPuntajes(1,this.puntajeBot);
     const posMejorPuntaje=this.elegirMejorPuntajeBot();
     if(posMejorPuntaje!=404){
