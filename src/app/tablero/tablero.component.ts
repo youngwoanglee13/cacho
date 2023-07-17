@@ -58,18 +58,16 @@ export class TableroComponent {
       this.puntajeJ1Tablero=this.puntajeJ1;
       this.setPuntajeDisabled=true;
       console.log("SE ANOTO",this.puntajeJ1[posicion]);
-      this.jugarBot3();//Despues de anotar el puntaje del jugador 1, juega el BOT
+      this.jugarBot3();//Despues de anotar el puntaje, juega el BOT
     }
     const posiblesPuntajes= this.posiblesPuntajes.filter(puntaje=>puntaje!=0);
-    if(this.dadosVolcados.length>0 && posiblesPuntajes.length===0 && this.puntajeJ1[posicion]===0){
+    if(!this.primeraTiradaJ1 &&this.dadosVolcados.length>0 && posiblesPuntajes.length===0 && this.puntajeJ1[posicion]===0){
       //EN UNA FUTURA ACTUALIZACION, SE PUEDE ELIMINAR SOLO SI NO HAY POSIBLES PUNTAJES CON NINGUNA COMBINACION DE DADOS VOLCADOS
       console.log("SE ELIMINA",this.puntajeJ1[posicion]);
       this.puntajeJ1[posicion]=-1;
-    }
-
-    
-
-    
+      this.puntajeJ1Tablero=this.puntajeJ1;
+      this.jugarBot3();//Despues de anotar el puntaje, juega el BOT
+    }    
   }
   getDadosEnMesa(){
     const dadosQueSeMantienen=this.dados.slice();
@@ -136,6 +134,11 @@ export class TableroComponent {
       this.dadosVolcados.push(posDado);
       console.log("VOLCANDO",this.dados[posDado]);
       this.dados[posDado]=7-this.dados[posDado];
+
+      const posiblesPuntajes= this.posiblesPuntajes.filter(puntaje=>puntaje!=0);
+      if(posiblesPuntajes.length===0){
+        this.setMensaje('Si no puedes anotar nada, elimina una casilla vacia',10);
+      }
     }
     if(this.dadosVolcados.length>0){
       this.calcularPosiblesPuntajes(2,this.puntajeJ1);
@@ -144,7 +147,7 @@ export class TableroComponent {
     }else{
       this.puntajeJ1Tablero=this.puntajeJ1;
       this.setPuntajeDisabled=false;
-      this.setMensaje('Tienes que volcar uno o dos dados',10);
+      this.setMensaje('Tienessss que volcar uno o dos dados',10);
     }
     
   }
