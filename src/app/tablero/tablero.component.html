@@ -21,10 +21,16 @@
             <td>{{puntajeBot[10]}}</td>
         </tr>
     </table>
-    <div>TotalPC</div>
+    <div>Total Bot: {{puntajeTotalBot}}</div>
 </div>
 <div>
-    <h2>{{dados.join(", ")}}</h2>
+    <div>
+        <span (click)="seleccionarDados(0)">{{dados[0]}}</span>
+        <span (click)="seleccionarDados(1)">{{dados[1]}}</span>
+        <span (click)="seleccionarDados(2)">{{dados[2]}}</span>
+        <span (click)="seleccionarDados(3)">{{dados[3]}}</span>
+        <span (click)="seleccionarDados(4)">{{dados[4]}}</span>
+    </div>
     <button type="button" (click)="jugarJ1()">Lanzar</button>
 </div>
 <div>
@@ -49,6 +55,6 @@
             <td (click)="anotarPuntajeJ1(10)">{{puntajeJ1Tablero[10]}}</td>
         </tr>
     </table>
-    <div>TotalTU</div>
+    <div>Total Tu: {{puntajeTotalJ1}}</div>
 </div>
 
