@@ -1,60 +1,75 @@
-<div>{{mensaje}}</div>
-<div>
-    <table>
-        <tr>
-            <td>{{puntajeBot[0]}}</td>
-            <td>{{puntajeBot[6]}}</td>
-            <td>{{puntajeBot[3]}}</td> 
-        </tr>
-        <tr>
-            <td>{{puntajeBot[1]}}</td>
-            <td>{{puntajeBot[7]}}</td>
-            <td>{{puntajeBot[4]}}</td> 
-        </tr>
-        <tr>
-            <td>{{puntajeBot[2]}}</td>
-            <td>{{puntajeBot[8]}}</td>
-            <td>{{puntajeBot[5]}}</td>
-        </tr>
-        <tr>
-            <td>{{puntajeBot[9]}}</td>
-            <td>{{puntajeBot[10]}}</td>
-        </tr>
-    </table>
-    <div>Total Bot: {{puntajeTotalBot}}</div>
-</div>
-<div>
-    <div>
-        <span (click)="seleccionarDados(0)">{{dados[0]}}</span>
-        <span (click)="seleccionarDados(1)">{{dados[1]}}</span>
-        <span (click)="seleccionarDados(2)">{{dados[2]}}</span>
-        <span (click)="seleccionarDados(3)">{{dados[3]}}</span>
-        <span (click)="seleccionarDados(4)">{{dados[4]}}</span>
+
+<body>
+    <div class="mensaje">
+        <p class="textoMensaje">{{mensaje}}</p>
     </div>
-    <button type="button" [disabled]="botonLanzarDisabled" (click)="jugarJ1()">Lanzar</button>
-</div>
-<div>
-    <table>
-        <tr>
-            <td (click)="anotarPuntajeJ1(0)">{{puntajeJ1Tablero[0]}}</td>
-            <td (click)="anotarPuntajeJ1(6)">{{puntajeJ1Tablero[6]}}</td>
-            <td (click)="anotarPuntajeJ1(3)">{{puntajeJ1Tablero[3]}}</td> 
-        </tr>
-        <tr>
-            <td (click)="anotarPuntajeJ1(1)">{{puntajeJ1Tablero[1]}}</td>
-            <td (click)="anotarPuntajeJ1(7)">{{puntajeJ1Tablero[7]}}</td>
-            <td (click)="anotarPuntajeJ1(4)">{{puntajeJ1Tablero[4]}}</td> 
-        </tr>
-        <tr>
-            <td (click)="anotarPuntajeJ1(2)">{{puntajeJ1Tablero[2]}}</td>
-            <td (click)="anotarPuntajeJ1(8)">{{puntajeJ1Tablero[8]}}</td>
-            <td (click)="anotarPuntajeJ1(5)">{{puntajeJ1Tablero[5]}}</td> 
-        </tr>
-        <tr>
-            <td (click)="anotarPuntajeJ1(9)">{{puntajeJ1Tablero[9]}}</td>
-            <td (click)="anotarPuntajeJ1(10)">{{puntajeJ1Tablero[10]}}</td>
-        </tr>
-    </table>
-    <div>Total Tu: {{puntajeTotalJ1}}</div>
-</div>
+    <div class="mesa puntajebot">
+        <table class="puntajebot1" >
+            <tr>
+                <td>{{puntajeBot[0]}}</td>
+                <td>{{puntajeBot[6]}}</td>
+                <td>{{puntajeBot[3]}}</td> 
+            </tr>
+            <tr>
+                <td>{{puntajeBot[1]}}</td>
+                <td>{{puntajeBot[7]}}</td>
+                <td>{{puntajeBot[4]}}</td> 
+            </tr>
+            <tr>
+                <td>{{puntajeBot[2]}}</td>
+                <td>{{puntajeBot[8]}}</td>
+                <td>{{puntajeBot[5]}}</td>
+            </tr>
+           
+        </table>
+        <table class="puntajebot2">
+            <tr>
+                <td>{{puntajeBot[9]}}</td>
+                <td>{{puntajeBot[10]}}</td>
+            </tr>
+        </table>
+        
+        <div class="puntajebot3"><p>Puntos Bot: {{puntajeTotalBot}}</p></div>
+    </div>
+    <div class="mesa zonalanzamiento">
+        <div class="divdados">
+            <span class="dado" (click)="seleccionarDados(0)"> <img src="../../assets/images/dice{{dados[0]}}.png" alt="Descripción de la imagen"></span>
+            <span class="dado" (click)="seleccionarDados(1)"> <img src="../../assets/images/dice{{dados[1]}}.png" alt="Descripción de la imagen"></span>
+            <span class="dado" (click)="seleccionarDados(2)"> <img src="../../assets/images/dice{{dados[2]}}.png" alt="Descripción de la imagen"></span>
+            <span class="dado" (click)="seleccionarDados(3)"> <img src="../../assets/images/dice{{dados[3]}}.png" alt="Descripción de la imagen"></span>
+            <span class="dado" (click)="seleccionarDados(4)"> <img src="../../assets/images/dice{{dados[4]}}.png" alt="Descripción de la imagen"></span>
+        </div>
+        <div class="divbotonlanzar">
+            <button class="botonlanzar" type="button" [disabled]="botonLanzarDisabled" (click)="jugarJ1()">Lanzar</button>
+        </div>
+        
+    </div>
+    <div class="mesa puntajej1">
+        <table class="puntajej11">
+            <tr>
+                <td (click)="anotarPuntajeJ1(0)">{{puntajeJ1Tablero[0]}}</td>
+                <td (click)="anotarPuntajeJ1(6)">{{puntajeJ1Tablero[6]}}</td>
+                <td (click)="anotarPuntajeJ1(3)">{{puntajeJ1Tablero[3]}}</td> 
+            </tr>
+            <tr>
+                <td (click)="anotarPuntajeJ1(1)">{{puntajeJ1Tablero[1]}}</td>
+                <td (click)="anotarPuntajeJ1(7)">{{puntajeJ1Tablero[7]}}</td>
+                <td (click)="anotarPuntajeJ1(4)">{{puntajeJ1Tablero[4]}}</td> 
+            </tr>
+            <tr>
+                <td (click)="anotarPuntajeJ1(2)">{{puntajeJ1Tablero[2]}}</td>
+                <td (click)="anotarPuntajeJ1(8)">{{puntajeJ1Tablero[8]}}</td>
+                <td (click)="anotarPuntajeJ1(5)">{{puntajeJ1Tablero[5]}}</td> 
+            </tr>
+           
+        </table>
+        <table class="puntajej12">
+            <tr>
+                <td (click)="anotarPuntajeJ1(9)">{{puntajeJ1Tablero[9]}}</td>
+                <td (click)="anotarPuntajeJ1(10)">{{puntajeJ1Tablero[10]}}</td>
+            </tr>
+        </table>
+        <div class="puntajej13"><p>Puntos: {{puntajeTotalJ1}}</p></div>
+    </div>   
+</body>
 

@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./tablero.component.scss']
 })
 export class TableroComponent {
-  dados: number[] = []
+  dados: number[] = [1,2,3,4,5]
   dadosARelanzar: number[]= [];
   dadosVolcados: number[] = []
   puntajeJ1Tablero= [0,0,0,0,0,0,0,0,0,0,0];
@@ -22,10 +22,17 @@ export class TableroComponent {
   botonLanzarDisabled=false;
   setPuntajeDisabled=true;
   lanzarDados() {
-    this.dados = [];
-    for (let i = 0; i < 5; i++) {
-      this.dados.push(Math.floor(Math.random() * 6) + 1);
-    }
+    let i = 0;
+    const intervalo = setInterval(() => {
+      i++;
+      for (let i = 0; i < 5; i++) {
+        this.dados[i]=(Math.floor(Math.random() * 6) + 1);
+      }
+      if (i >= 20) {
+        clearInterval(intervalo);
+      }
+    }, 70+i*20);
+
     console.log("LANZANDO:",this.dados);
   }
   esDormida(){
@@ -42,11 +49,20 @@ export class TableroComponent {
     return false;
   }
   lanzaraNDados(dadosEnMesa: number[]){
-    const dadosARelanzar= 5-dadosEnMesa.length;
-    for (let i = 0; i < dadosARelanzar; i++) {
-      dadosEnMesa.push(Math.floor(Math.random() * 6) + 1);
+    //const dadosARelanzar= 5-dadosEnMesa.length;
+    for (let i = 0; i < dadosEnMesa.length; i++) {
+        this.dados[i]=dadosEnMesa[i];
     }
-    this.dados=dadosEnMesa;
+    let i = 0;
+    const intervalo = setInterval(() => {
+      i++;
+      for (let i = 0; i < 5-dadosEnMesa.length; i++) {
+        this.dados[4-i]=(Math.floor(Math.random() * 6) + 1);
+      }
+      if (i >= 40) {
+        clearInterval(intervalo);
+      }
+    }, 70);
     console.log("LANZANDO OTRA VEZ:",this.dados);
   }
   
@@ -89,27 +105,25 @@ export class TableroComponent {
     return dadosQueSeMantienen.filter(dado=>dado!=0);
   }
   jugarJ1(){
-    // if(this.primeraTiradaJ1){
-    //   console.log("JUEGA J1 -------------");
-    //   this.primeraTiradaJ1=false;
-    //   this.lanzarDados();
-    //   if(this.esDormida()) return;
-    //   this.setPuntajeDisabled=false;
-    //   this.calcularPosiblesPuntajes(1,this.puntajeJ1);
-    //   this.mostrarOpcionesDePuntajeJ1();
-    //   this.setMensaje('Anota tu puntaje o puedes volver a lanzar los dados',30);
+    if(this.primeraTiradaJ1){
+      console.log("JUEGA J1 -------------");
+      this.primeraTiradaJ1=false;
+      this.lanzarDados();
+    //  if(this.esDormida()) return;
+      this.setPuntajeDisabled=false;
+      this.calcularPosiblesPuntajes(1,this.puntajeJ1);
+      this.mostrarOpcionesDePuntajeJ1();
+      this.setMensaje('Anota tu puntaje o puedes volver a lanzar los dados',30);
       
-    // }else{
-    //   if(this.turnoJ1 && this.dadosARelanzar.length===0) {this.setMensaje('Primero selecciona los dados a relanzar',17);return;}
-    //   this.lanzaraNDados(this.getDadosEnMesa().slice());
-    //   this.setPuntajeDisabled=true;
-    //   this.botonLanzarDisabled=true;
-    //   this.puntajeJ1Tablero=this.puntajeJ1.slice();
-    //   this.setMensaje('Tienes que volcar uno o dos dados, luego anota',25);
-    // }
-    // this.verificarEstadoDelJuego();
-    this.dados=[1,1,1,5,5];
-    console.log(this.calcularFull(1));
+    }else{
+      if(this.turnoJ1 && this.dadosARelanzar.length===0) {this.setMensaje('Primero selecciona los dados a relanzar',17);return;}
+      this.lanzaraNDados(this.getDadosEnMesa().slice());
+      this.setPuntajeDisabled=true;
+      this.botonLanzarDisabled=true;
+      this.puntajeJ1Tablero=this.puntajeJ1.slice();
+      this.setMensaje('Tienes que volcar uno o dos dados, luego anota',25);
+    }
+    this.verificarEstadoDelJuego();
   }
   mostrarOpcionesDePuntajeJ1(){
     this.puntajeJ1Tablero=this.posiblesPuntajes.slice();
@@ -248,7 +262,7 @@ export class TableroComponent {
     console.log("TERMINO LA PARTIDA"); // los botones se desactivan
   }
   setMensaje(estado: string, velocidad: number) {
-    this.mensaje = "Bot:";
+    this.mensaje = " ";
     let i = 0;
     const intervalo = setInterval(() => {
       this.mensaje += estado[i];
@@ -261,30 +275,57 @@ export class TableroComponent {
 
   //________________________________________________________________________________________________________InicioBot
   async jugarBot3(){
-    this.botonLanzarDisabled=true;
-    console.log("JUEGA BOT -------------");
-    this.jugadasRealizadas++;
-    this.setMensaje('Mi turno', 30);
-    this.lanzarDados();
-    if(this.esDormida()) return;
-    this.calcularPosiblesPuntajes(1,this.puntajeBot);
-    const posMejorPuntaje=this.elegirMejorPuntajeBot();
-    if(posMejorPuntaje!=404){
-      if(this.posiblesPuntajes[posMejorPuntaje]>=20){
-        this.puntajeBot[posMejorPuntaje]=this.posiblesPuntajes[posMejorPuntaje];
-        console.log("SE ANOTO",this.puntajeBot[posMejorPuntaje]);
-        console.log("--",this.puntajeBot);
-        this.setMensaje('Anoto '+ this.puntajeBot[posMejorPuntaje], 30);
-      }else{
-        this.setMensaje('Vuelvo a lanzar', 30);;
-        this.lanzarDadosSegundaVez();
-       }
-    }else{
-      this.setMensaje('Vuelvo a lanzar', 30);
-      this.lanzarDadosSegundaVez();
-    }    
-    this.verificarEstadoDelJuego();
-    this.habilitarJ1();
+    let i=0;
+    const intervalobot = setInterval(() => {
+      i++;
+      if (i >= 2) {
+        this.botonLanzarDisabled=true;
+        console.log("JUEGA BOT -------------");
+        this.jugadasRealizadas++;
+        this.setMensaje('Mi turno', 30);
+
+
+
+        let j = 0;
+        const intervalo1 = setInterval(() => {
+          j++;
+          if (j == 0){this.lanzarDados()};
+          if (j >= 5) {
+            //if(this.esDormida()) return;
+            this.calcularPosiblesPuntajes(1,this.puntajeBot);
+            const posMejorPuntaje=this.elegirMejorPuntajeBot();
+            if(posMejorPuntaje!=404){
+              if(this.posiblesPuntajes[posMejorPuntaje]>=20){
+                this.puntajeBot[posMejorPuntaje]=this.posiblesPuntajes[posMejorPuntaje];
+                console.log("SE ANOTO",this.puntajeBot[posMejorPuntaje]);
+                console.log("--",this.puntajeBot);
+                this.setMensaje('Anoto '+ this.puntajeBot[posMejorPuntaje], 30);
+              }else{
+                this.setMensaje('Vuelvo a lanzar', 30);;
+                this.lanzarDadosSegundaVez();
+              }
+            }else{
+              this.setMensaje('Vuelvo a lanzar', 30);
+              this.lanzarDadosSegundaVez();
+            }    
+            this.verificarEstadoDelJuego();
+            this.habilitarJ1();
+            clearInterval(intervalo1);
+          }
+        }, 1000);
+
+
+
+
+
+
+
+        
+        clearInterval(intervalobot);
+      }
+    }, 1000);
+
+    
 
   }
   async lanzarDadosSegundaVez(){
